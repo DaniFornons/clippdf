@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>ClipPDF · Add Attachments</title>
+  <title>ClipPDF · Extract Attachments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;max-width:760px;margin:32px auto;padding:0 16px}
     form{border:1px solid #e5e7eb;border-radius:10px;padding:16px}
@@ -10,34 +11,26 @@
     input[type="file"]{margin-top:6px}
     button{margin-top:16px;padding:10px 16px;border:1px solid #d1d5db;border-radius:8px;background:#f9fafb;cursor:pointer}
     .error{padding:10px;border:1px solid #fca5a5;background:#fee2e2;border-radius:8px;margin:12px 0}
+    a{display:inline-block;margin-top:12px}
   </style>
 </head>
 <body>
-  <h1>ClipPDF — Add Attachments</h1>
-  <p>Upload a <strong>base PDF</strong> and one or more files to embed as attachments inside the PDF.</p>
+  <h1>ClipPDF — Extract Attachments</h1>
+  <p>Upload a PDF with embedded files; you'll receive a ZIP with all extracted attachments.</p>
 
   {% if error %}<div class="error">{{ error }}</div>{% endif %}
   {% if form.errors %}
     <div class="error"><strong>Errors:</strong> {{ form.errors|striptags }}</div>
   {% endif %}
 
-  <form method="post" enctype="multipart/form-data" action="{% url 'core:generate' %}">
+  <form method="post" enctype="multipart/form-data" action="{% url 'core:extract' %}">
     {% csrf_token %}
-    <label>Base PDF
-      <input type="file" name="pdf_base" accept=".pdf,application/pdf" required>
+    <label>PDF with attachments
+      <input type="file" name="pdf_with_attachments" accept=".pdf,application/pdf" required>
     </label>
-
-    <label>Files to attach
-      <input type="file" name="attachments" multiple>
-    </label>
-
-    <button type="submit">Generate PDF with attachments</button>
+    <button type="submit">Extract and download ZIP</button>
   </form>
 
-  <p style="margin-top:14px;font-size:14px;color:#555">
-    Tip: Browser Preview won’t show attachments. Use Adobe Acrobat Reader and open the “Attachments” panel.
-  </p>
-  <p><a href="{% url 'core:extract' %}">Need to extract attachments instead?</a></p>
-
+  <a href="{% url 'core:home' %}">← Back to “Add attachments”</a>
 </body>
 </html>

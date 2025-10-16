@@ -3,7 +3,8 @@ import unicodedata
 from django.shortcuts import render
 from django.http import FileResponse, HttpResponseBadRequest
 from pypdf import PdfReader, PdfWriter
-from .forms import AddAttachmentsForm
+from .forms import AddAttachmentsForm, ExtractForm
+from zipfile import ZipFile
 
 def safe_name(name: str) -> str:
     # Normalize accents/whitespace to avoid issues inside the PDF’s attachment names
@@ -14,6 +15,9 @@ def home(request):
     return render(request, "core/add.html", {"form": AddAttachmentsForm()})
 
 def generate(request):
+    if request.method == "GET":
+        return render(request, "core/add.html", {"form": AddAttachmentsForm()})
+    
     if request.method != "POST":
         return HttpResponseBadRequest("Use POST")
 
@@ -66,3 +70,65 @@ def generate(request):
         )
     except Exception as e:
         return render(request, "core/add.html", {"form": form, "error": f"An error occurred: {e}"}, status=500)
+
+def extract(request):
+    if request.method == "GET":
+        return render(request, "core/extract.html", {"form": ExtractForm()})
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("Use POST")
+
+    form = ExtractForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return render(request, "core/extract.html", {"form": form}, status=400)
+
+    pdf = form.cleaned_data["pdf_with_attachments"]
+
+    try:
+        pdf.seek(0)
+        reader = PdfReader(pdf)
+
+        # Navigate /Root/Names/EmbeddedFiles/Names
+        root = reader.trailer.get("/Root")
+        names_dict = root.get("/Names") if root else None
+        embedded = names_dict.get("/EmbeddedFiles") if names_dict else None
+        names_array = embedded.get_object().get("/Names") if embedded else None
+
+        if not names_array:
+            return render(
+                request,
+                "core/extract.html",
+                {"form": form, "error": "This PDF does not contain embedded attachments."},
+                status=400,
+            )
+
+        out_zip = BytesIO()
+        with ZipFile(out_zip, "w") as zf:
+            for i in range(0, len(names_array), 2):
+                try:
+                    name_obj = str(names_array[i])
+                    filespec = names_array[i + 1].get_object()
+                    ef = filespec.get("/EF")
+                    f_stream = ef.get("/F").get_object() if ef else None
+                    data = f_stream.get_data() if f_stream else b""
+                    zf.writestr(safe_name(name_obj), data)
+                except Exception:
+                    # skip broken entries but continue with others
+                    continue
+
+        out_zip.seek(0)
+        stem = pdf.name.rsplit(".", 1)[0]
+        return FileResponse(
+            out_zip,
+            as_attachment=True,
+            filename=f"{safe_name(stem)}_attachments.zip",
+            content_type="application/zip",
+        )
+
+    except Exception as e:
+        return render(
+            request,
+            "core/extract.html",
+            {"form": form, "error": f"An error occurred: {e}"},
+            status=500,
+        )

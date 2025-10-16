@@ -5,4 +5,5 @@ app_name = "core"
 urlpatterns = [
     path("", views.home, name="home"),
     path("generate/", views.generate, name="generate"),
+    path("extract/", views.extract, name="extract"),
 ]
