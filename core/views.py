@@ -1,46 +1,56 @@
 from io import BytesIO
 import unicodedata
-from django.shortcuts import render
-from django.http import FileResponse, HttpResponseBadRequest
-from pypdf import PdfReader, PdfWriter
-from .forms import AddAttachmentsForm, ExtractForm
 from zipfile import ZipFile
 
+from django.contrib import messages
+from django.http import FileResponse, HttpResponseBadRequest
+from django.shortcuts import render, redirect
+
+from pypdf import PdfReader, PdfWriter
+
+from .forms import AddAttachmentsForm, ExtractForm
+
+
 def safe_name(name: str) -> str:
-    # Normalize accents/whitespace to avoid issues inside the PDF’s attachment names
+    """Normalize accents/whitespace for attachment/file names."""
     name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
     return (name or "attachment").replace(" ", "_")
 
-def home(request):
-    return render(request, "core/home.html", {"form": AddAttachmentsForm()})
 
+def home(request):
+    """Home page with two buttons."""
+    return render(request, "core/home.html")
+
+
+# -------- Add attachments --------
 def generate(request):
     if request.method == "GET":
         return render(request, "core/add.html", {"form": AddAttachmentsForm()})
-    
-    if request.method != "POST":
-        return HttpResponseBadRequest("Use POST")
 
+    # POST
     form = AddAttachmentsForm(request.POST, request.FILES)
     if not form.is_valid():
+        # Field-level errors shown on same POST
         return render(request, "core/add.html", {"form": form}, status=400)
 
     pdf_base = form.cleaned_data["pdf_base"]
-    attachments = request.FILES.getlist("attachments")  # multiple input
+    attachments = request.FILES.getlist("attachments")
+
     if not attachments:
-        return render(request, "core/add.html", {"form": form, "error": "Please select at least one file to attach."}, status=400)
+        messages.error(request, "Please select at least one file to attach.")
+        return redirect("core:generate")  # PRG: prevents sticky error
 
     try:
         pdf_base.seek(0)
         reader = PdfReader(pdf_base)
         writer = PdfWriter()
 
-        # copy pages
         for page in reader.pages:
             writer.add_page(page)
 
-        # unique filenames to avoid collisions
+        # Unique names in case of duplicates
         used = set()
+
         def unique(n):
             base, dot, ext = n.rpartition(".")
             cand, i = n, 1
@@ -50,7 +60,6 @@ def generate(request):
             used.add(cand)
             return cand
 
-        # add each file as embedded attachment
         for f in attachments:
             f.seek(0)
             name = unique(safe_name(f.name))
@@ -69,15 +78,16 @@ def generate(request):
             content_type="application/pdf",
         )
     except Exception as e:
-        return render(request, "core/add.html", {"form": form, "error": f"An error occurred: {e}"}, status=500)
+        messages.error(request, f"An unexpected error occurred: {e}")
+        return redirect("core:generate")
 
+
+# -------- Extract attachments --------
 def extract(request):
     if request.method == "GET":
         return render(request, "core/extract.html", {"form": ExtractForm()})
 
-    if request.method != "POST":
-        return HttpResponseBadRequest("Use POST")
-
+    # POST
     form = ExtractForm(request.POST, request.FILES)
     if not form.is_valid():
         return render(request, "core/extract.html", {"form": form}, status=400)
@@ -88,19 +98,15 @@ def extract(request):
         pdf.seek(0)
         reader = PdfReader(pdf)
 
-        # Navigate /Root/Names/EmbeddedFiles/Names
+        # /Root/Names/EmbeddedFiles/Names
         root = reader.trailer.get("/Root")
         names_dict = root.get("/Names") if root else None
         embedded = names_dict.get("/EmbeddedFiles") if names_dict else None
         names_array = embedded.get_object().get("/Names") if embedded else None
 
         if not names_array:
-            return render(
-                request,
-                "core/extract.html",
-                {"form": form, "error": "This PDF does not contain embedded attachments."},
-                status=400,
-            )
+            messages.warning(request, "This PDF does not contain embedded attachments.")
+            return redirect("core:extract")  # PRG
 
         out_zip = BytesIO()
         with ZipFile(out_zip, "w") as zf:
@@ -113,7 +119,7 @@ def extract(request):
                     data = f_stream.get_data() if f_stream else b""
                     zf.writestr(safe_name(name_obj), data)
                 except Exception:
-                    # skip broken entries but continue with others
+                    # skip broken entries
                     continue
 
         out_zip.seek(0)
@@ -124,11 +130,6 @@ def extract(request):
             filename=f"{safe_name(stem)}_attachments.zip",
             content_type="application/zip",
         )
-
     except Exception as e:
-        return render(
-            request,
-            "core/extract.html",
-            {"form": form, "error": f"An error occurred: {e}"},
-            status=500,
-        )
+        messages.error(request, f"An unexpected error occurred: {e}")
+        return redirect("core:extract")

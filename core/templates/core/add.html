@@ -5,9 +5,6 @@
     <h1 class="mb-2">Add Attachments</h1>
     <p class="text-muted">Upload a base PDF and one or more files. They will be embedded inside the PDF.</p>
 
-    {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
     {% if form.errors %}
       <div class="alert alert-warning">{{ form.errors|striptags }}</div>
     {% endif %}
@@ -39,4 +36,3 @@
     </div>
   </div>
 {% endblock %}
-
