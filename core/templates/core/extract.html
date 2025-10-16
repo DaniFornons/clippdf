@@ -1,9 +1,10 @@
 {% extends "core/base.html" %}
-{% block title %}ClipPDF · Extract Attachments{% endblock %}
+{% load i18n %}
+{% block title %}ClipPDF · {% trans "Extract Attachments" %}{% endblock %}
 {% block content %}
   <div class="mx-auto text-center" style="max-width: 640px;">
-    <h1 class="mb-2">Extract Attachments</h1>
-    <p class="text-muted">Upload a PDF with embedded files to download a ZIP with all attachments.</p>
+    <h1 class="mb-2">{% trans "Extract Attachments" %}</h1>
+    <p class="text-muted">{% trans "Upload a PDF with embedded files to download a ZIP with all attachments." %}</p>
 
     {% if form.errors %}
       <div class="alert alert-warning">{{ form.errors|striptags }}</div>
@@ -12,18 +13,18 @@
     <form method="post" enctype="multipart/form-data" action="{% url 'core:extract' %}" class="border rounded p-4 bg-light text-start">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">PDF with attachments</label>
+        <label class="form-label">{% trans "PDF with attachments" %}</label>
         <input type="file" class="form-control" name="pdf_with_attachments" accept=".pdf,application/pdf" required>
       </div>
 
       <div class="text-center">
-        <button type="submit" class="btn btn-success">Extract and download ZIP</button>
+        <button type="submit" class="btn btn-success">{% trans "Extract and download ZIP" %}</button>
       </div>
     </form>
 
     <div class="mt-4">
-      <a href="{% url 'core:home' %}" class="text-decoration-none">← Back to Home</a> |
-      <a href="{% url 'core:generate' %}" class="text-decoration-none">Go to Add →</a>
+      <a href="{% url 'core:home' %}" class="text-decoration-none">← {% trans "Back to Home" %}</a> |
+      <a href="{% url 'core:generate' %}" class="text-decoration-none">{% trans "Go to Add" %} →</a>
     </div>
   </div>
 {% endblock %}

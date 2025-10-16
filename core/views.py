@@ -3,13 +3,13 @@ import unicodedata
 from zipfile import ZipFile
 
 from django.contrib import messages
-from django.http import FileResponse, HttpResponseBadRequest
+from django.http import FileResponse
 from django.shortcuts import render, redirect
 
 from pypdf import PdfReader, PdfWriter
 
 from .forms import AddAttachmentsForm, ExtractForm
-
+from django.utils.translation import gettext as _
 
 def safe_name(name: str) -> str:
     """Normalize accents/whitespace for attachment/file names."""
@@ -37,9 +37,9 @@ def generate(request):
     attachments = request.FILES.getlist("attachments")
 
     if not attachments:
-        messages.error(request, "Please select at least one file to attach.")
-        return redirect("core:generate")  # PRG: prevents sticky error
-
+        messages.error(request, _("Please select at least one file to attach."))
+        return redirect("core:generate")
+    
     try:
         pdf_base.seek(0)
         reader = PdfReader(pdf_base)
@@ -78,7 +78,7 @@ def generate(request):
             content_type="application/pdf",
         )
     except Exception as e:
-        messages.error(request, f"An unexpected error occurred: {e}")
+        messages.error(request, _("An unexpected error occurred: %(msg)s") % {"msg": e})
         return redirect("core:generate")
 
 
@@ -105,9 +105,9 @@ def extract(request):
         names_array = embedded.get_object().get("/Names") if embedded else None
 
         if not names_array:
-            messages.warning(request, "This PDF does not contain embedded attachments.")
+            messages.warning(request, _("This PDF does not contain embedded attachments."))
             return redirect("core:extract")  # PRG
-
+ 
         out_zip = BytesIO()
         with ZipFile(out_zip, "w") as zf:
             for i in range(0, len(names_array), 2):
