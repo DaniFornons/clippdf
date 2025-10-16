@@ -1,36 +1,32 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>ClipPDF · Extract Attachments</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;max-width:760px;margin:32px auto;padding:0 16px}
-    form{border:1px solid #e5e7eb;border-radius:10px;padding:16px}
-    label{display:block;margin-top:12px}
-    input[type="file"]{margin-top:6px}
-    button{margin-top:16px;padding:10px 16px;border:1px solid #d1d5db;border-radius:8px;background:#f9fafb;cursor:pointer}
-    .error{padding:10px;border:1px solid #fca5a5;background:#fee2e2;border-radius:8px;margin:12px 0}
-    a{display:inline-block;margin-top:12px}
-  </style>
-</head>
-<body>
-  <h1>ClipPDF — Extract Attachments</h1>
-  <p>Upload a PDF with embedded files; you'll receive a ZIP with all extracted attachments.</p>
+{% extends "core/base.html" %}
+{% block title %}ClipPDF · Extract Attachments{% endblock %}
+{% block content %}
+  <div class="mx-auto text-center" style="max-width: 640px;">
+    <h1 class="mb-2">Extract Attachments</h1>
+    <p class="text-muted">Upload a PDF with embedded files to download a ZIP with all attachments.</p>
 
-  {% if error %}<div class="error">{{ error }}</div>{% endif %}
-  {% if form.errors %}
-    <div class="error"><strong>Errors:</strong> {{ form.errors|striptags }}</div>
-  {% endif %}
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if form.errors %}
+      <div class="alert alert-warning">{{ form.errors|striptags }}</div>
+    {% endif %}
 
-  <form method="post" enctype="multipart/form-data" action="{% url 'core:extract' %}">
-    {% csrf_token %}
-    <label>PDF with attachments
-      <input type="file" name="pdf_with_attachments" accept=".pdf,application/pdf" required>
-    </label>
-    <button type="submit">Extract and download ZIP</button>
-  </form>
+    <form method="post" enctype="multipart/form-data" action="{% url 'core:extract' %}" class="border rounded p-4 bg-light text-start">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">PDF with attachments</label>
+        <input type="file" class="form-control" name="pdf_with_attachments" accept=".pdf,application/pdf" required>
+      </div>
 
-  <a href="{% url 'core:home' %}" style="color:#2563eb;text-decoration:none;">← Back to Home</a>
-</body>
-</html>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success">Extract and download ZIP</button>
+      </div>
+    </form>
+
+    <div class="mt-4">
+      <a href="{% url 'core:home' %}" class="text-decoration-none">← Back to Home</a> |
+      <a href="{% url 'core:generate' %}" class="text-decoration-none">Go to Add →</a>
+    </div>
+  </div>
+{% endblock %}
