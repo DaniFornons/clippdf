@@ -12,7 +12,7 @@ def safe_name(name: str) -> str:
     return (name or "attachment").replace(" ", "_")
 
 def home(request):
-    return render(request, "core/add.html", {"form": AddAttachmentsForm()})
+    return render(request, "core/home.html", {"form": AddAttachmentsForm()})
 
 def generate(request):
     if request.method == "GET":

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>ClipPDF · Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif;
+      max-width: 800px;
+      margin: 60px auto;
+      text-align: center;
+      color: #111;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #555;
+      margin-bottom: 40px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    a.button {
+      display: inline-block;
+      padding: 18px 32px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      background-color: #2563eb; /* blue */
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    a.button:hover {
+      background-color: #1d4ed8;
+      transform: scale(1.03);
+    }
+    footer {
+      margin-top: 60px;
+      font-size: 0.85rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to ClipPDF</h1>
+  <p>A simple tool to attach or extract files inside PDFs.</p>
+
+  <div class="buttons">
+    <a href="{% url 'core:generate' %}" class="button">📎 Add Attachments</a>
+    <a href="{% url 'core:extract' %}" class="button" style="background-color:#16a34a;">🗂 Extract Attachments</a>
+  </div>
+
+  <footer>
+    <p>ClipPDF © 2025 — Built with Django & pypdf</p>
+  </footer>
+</body>
+</html>
