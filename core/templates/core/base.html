@@ -1,7 +1,6 @@
-{% load i18n %}
 {% load static %}
 <!doctype html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html>
 <head>
   <meta charset="utf-8"/>
   <title>{% block title %}ClipPDF{% endblock %}</title>
@@ -17,7 +16,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
   <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
-  <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
 
   {% block extra_head %}{% endblock %}
 </head>
@@ -35,20 +33,10 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="mainnav">
         <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">{% trans "Home" %}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'core:generate' %}">{% trans "Add" %}</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'core:extract' %}">{% trans "Extract" %}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Inici </a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'core:generate' %}">Afegir</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'core:extract' %}"> Extreure</a></li>
         </ul>
-        <!-- Language selector -->
-        <form action="{% url 'set_language' %}" method="post" class="d-flex align-items-center">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
-            <option value="en" {% if LANGUAGE_CODE|slice:":2" == "en" %}selected{% endif %}>English</option>
-            <option value="es" {% if LANGUAGE_CODE|slice:":2" == "es" %}selected{% endif %}>Español</option>
-            <option value="ca" {% if LANGUAGE_CODE|slice:":2" == "ca" %}selected{% endif %}>Català</option>
-          </select>
-        </form>
       </div>
     </div>
   </nav>

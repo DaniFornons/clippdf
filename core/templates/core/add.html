@@ -1,10 +1,9 @@
 {% extends "core/base.html" %}
-{% load i18n %}
-{% block title %}ClipPDF · {% trans "Add Attachments" %}{% endblock %}
+{% block title %}ClipPDF · Afegir Adjunts{% endblock %}
 {% block content %}
   <div class="mx-auto text-center" style="max-width: 640px;">
-    <h1 class="mb-2">{% trans "Add Attachments" %}</h1>
-    <p class="text-muted">{% trans "Upload a base PDF and one or more files. They will be embedded inside the PDF." %}</p>
+    <h1 class="mb-2">Afegir Adjunts</h1>
+    <p class="text-muted">Puja un PDF base i un o més fitxers. S'inseriran dins del PDF.</p>
 
     {% if form.errors %}
       <div class="alert alert-warning">{{ form.errors|striptags }}</div>
@@ -13,27 +12,29 @@
     <form method="post" enctype="multipart/form-data" action="{% url 'core:generate' %}" class="border rounded p-4 bg-light text-start">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">{% trans "Base PDF" %}</label>
+        <label class="form-label">PDF Base</label>
         <input type="file" class="form-control" name="pdf_base" accept=".pdf,application/pdf" required>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">{% trans "Files to attach" %}</label>
+        <label class="form-label">Arxius a adjuntar</label>
         <input type="file" class="form-control" name="attachments" multiple>
       </div>
 
       <div class="text-center">
-        <button type="submit" class="btn btn-primary">{% trans "Generate PDF with attachments" %}</button>
+        <button type="submit" class="btn btn-primary">Generar PDF</button>
       </div>
 
       <p class="text-muted mt-3 mb-0" style="font-size: 0.95rem;">
-        {% trans "Note: Browser Preview won’t show attachments. Use Adobe Acrobat Reader (Attachments panel)." %}
+        Nota: La previsualització del navegador no mostrarà els adjunts.
+        Utilitzeu Adobe Acrobat Reader (panell d'adjunts).
+
       </p>
     </form>
 
     <div class="mt-4">
-      <a href="{% url 'core:home' %}" class="text-decoration-none">← {% trans "Back to Home" %}</a> |
-      <a href="{% url 'core:extract' %}" class="text-decoration-none">{% trans "Go to Extract" %} →</a>
+      <a href="{% url 'core:home' %}" class="text-decoration-none">← Tornar a Inici</a> |
+      <a href="{% url 'core:extract' %}" class="text-decoration-none">Anar a Extreure →</a>
     </div>
   </div>
 {% endblock %}
