@@ -5,9 +5,6 @@
 - **Extract embedded files** from a PDF as a ZIP  
 - **Switch languages** between Catalan, English, and Spanish
 
-You can test it live at:  
-**[https://clippdf.pythonanywhere.com](https://clippdf.pythonanywhere.com)**
-
 ---
 
 ## How to Deploy 
