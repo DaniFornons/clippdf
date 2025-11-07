@@ -27,34 +27,30 @@ SECRET_KEY=change-this-key
 DEBUG=False
 ALLOWED_HOSTS=localhost,127.0.0.1
 CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1
-LANGUAGE_CODE=ca
+LANGUAGE_CODE=es
 ```
 
----
-
-## Run 
-
-### 1. Create and activate a virtual environment
+### 3. Create and activate a virtual environment
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-### 2. Install dependencies
+### 4. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Run the development server
+### 5. Run the development server
 ```bash
 python manage.py runserver
 ```
 
-### 4. Access the app
+### 6. Access the app
 Open your browser at:  
 [http://localhost:8000](http://localhost:8000)
 
-### 5. Stop the server
+### 7. Stop the server
 Press:
 ```bash
 Ctrl + C
