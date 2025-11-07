@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ClipPDF 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 13:34+0000\n"
+"POT-Creation-Date: 2025-11-07 10:52+0000\n"
 "PO-Revision-Date: 2025-10-16 14:00+0000\n"
 "Last-Translator: Dani Fornons <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: clippdf/settings.py:120
+#: clippdf/settings.py:127
 msgid "English"
 msgstr "Inglés"
 
-#: clippdf/settings.py:121
+#: clippdf/settings.py:128
 msgid "Spanish"
 msgstr "Español"
 
-#: clippdf/settings.py:122
+#: clippdf/settings.py:129
 msgid "Catalan"
 msgstr "Catalán"
 
@@ -84,15 +84,15 @@ msgstr "Volver al inicio"
 msgid "Go to Extract"
 msgstr "Ir a Extraer"
 
-#: core/templates/core/base.html:31
+#: core/templates/core/base.html:37
 msgid "Home"
 msgstr "Inicio"
 
-#: core/templates/core/base.html:32
+#: core/templates/core/base.html:38
 msgid "Add"
 msgstr "Añadir"
 
-#: core/templates/core/base.html:33
+#: core/templates/core/base.html:39
 msgid "Extract"
 msgstr "Extraer"
 
@@ -133,11 +133,16 @@ msgstr ""
 msgid "Please select at least one file to attach."
 msgstr "Por favor, selecciona al menos un archivo para adjuntar."
 
-#: core/views.py:81
+#: core/views.py:52
+#, python-format
+msgid " Invalid files: %(files)s"
+msgstr "Ficheros invàlidos: %(files)s"
+
+#: core/views.py:95
 #, python-format
 msgid "An unexpected error occurred: %(msg)s"
 msgstr "Se produjo un error inesperado: %(msg)s"
 
-#: core/views.py:108
+#: core/views.py:122
 msgid "This PDF does not contain embedded attachments."
 msgstr "Este PDF no contiene archivos adjuntos."

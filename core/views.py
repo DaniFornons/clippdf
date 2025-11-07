@@ -39,7 +39,21 @@ def generate(request):
     if not attachments:
         messages.error(request, _("Please select at least one file to attach."))
         return redirect("core:generate")
-    
+
+    # Validate file extensions
+    valid_extensions = {
+        '.pdf', '.txt', '.csv','.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+        '.odt', '.ods', '.odp', '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg'
+    }
+    invalid = [f.name for f in attachments if not f.name.lower().endswith(tuple(valid_extensions))]
+    if invalid:
+        messages.error(
+            request,
+            _(" Invalid files: %(files)s")
+            % {"files": ", ".join(invalid)},
+        )
+        return redirect("core:generate")
+
     try:
         pdf_base.seek(0)
         reader = PdfReader(pdf_base)
