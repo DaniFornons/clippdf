@@ -32,30 +32,7 @@ LANGUAGE_CODE=ca
 
 ---
 
-## Run with Docker
-
-### 1. Build and start the containers
-```bash
-docker compose build
-docker compose up -d
-```
-
-This will start two containers:
-- **web** → Django + Gunicorn  
-- **nginx** → Serves static files and proxies requests to Gunicorn
-
-### 2. Access the app
-Once the containers are running, open:  
-[http://localhost](http://localhost)
-
-### 3. Stop the containers
-```bash
-docker compose down
-```
-
----
-
-## Run without Docker
+## Run 
 
 ### 1. Create and activate a virtual environment
 ```bash
@@ -70,7 +47,6 @@ pip install -r requirements.txt
 
 ### 3. Run the development server
 ```bash
-python manage.py migrate
 python manage.py runserver
 ```
 
